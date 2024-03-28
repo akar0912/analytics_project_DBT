@@ -1,0 +1,59 @@
+
+# Name your project! Project names should contain only lowercase characters
+# and underscores. A good package name should reflect your organization's
+# name or the intended use of these models
+name: 'analytics_engineering_assessment'
+version: '1.0.0'
+config-version: 2
+
+# This setting configures which "profile" dbt uses for this project.
+profile: 'analytics_engineering_assessment'
+
+# These configurations specify where dbt should look for different types of files.
+# The `model-paths` config, for example, states that models in this project can be
+# found in the "models/" directory. You probably won't need to change these!
+model-paths: ["models"]
+analysis-paths: ["analyses"]
+test-paths: ["tests"]
+seed-paths: ["seeds"]
+seeds:  # This is where the seed configurations should start
+  #analytis_engineering_assessment: # Replace with your project's name. This should match the 'name' key above if the seeds are in the same project.
+  staking_Rates:  # This is the name of your seed file without the extension, assuming the file is seeds/staking_Rates.csv
+    +column_types:
+      source_ts_ms: BIGINIT
+      dailyRewardPerUnit: DOUBLE PRECISION
+      stakedAmount: REAL
+  staking_Rewards:  # This is another seed file in your seeds directory
+    +column_types:
+      date: DATE
+      source_ts_ms: BIGINT
+      amount: REAL
+      type: VARCHAR
+      xx: INTEGER
+      rewardXx: INTEGER
+      deleted: BOOLEAN
+
+macro-paths: ["macros"]
+snapshot-paths: ["snapshots"]
+
+target-path: "target"  # directory which will store compiled SQL files
+clean-targets:         # directories to be removed by `dbt clean`
+  - "target"
+  - "dbt_packages"
+
+
+# Configuring models
+# Full documentation: https://docs.getdbt.com/docs/configuring-models
+
+# In this example config, we tell dbt to build all models in the example/
+# directory as views. These settings can be overridden in the individual model
+# files using the `{{ config(...) }}` macro.
+models:
+  +persist_docs:
+    relation: true
+    columns: true
+
+seeds:
+  +persist_docs:
+    relation: true
+    columns: true
