@@ -20,7 +20,7 @@ Below are the details for various setups used while implementing the solutions
     brew install postgresql
     brew services start postgresql
     ```
-3. Python virutal env = 
+3. Python virutal env = `Python 3.10.14`
 4. DBT  
     ```
     python -m pip install dbt-core
