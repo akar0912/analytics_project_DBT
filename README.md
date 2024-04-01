@@ -1,33 +1,57 @@
 # Analytics Engineering Assessment
 
-## What is being assessed:
-- **Data Modelling**: ability to design a comprehensive and intuitive data model that accurately represents 
-business processes and unlocks the potential for analytics
-- **Code Quality**: ability to write clean, understandable and performant analytics code using DRY principles
+Author = Alisha Kar
 
-One of the ways Bitvavo earns passive income is by staking cryptocurrencies. Think of staking as depositing 
-cryptocurrencies in a "high-yield savings account". Assets are locked up for a certain term. In exchange 
-for locking up these assets, Bitvavo receives rewards in either the same asset or others as staking rewards.
+- [Analytics Engineering Assessment](#analytics-engineering-assessment)
+  - [Introduction](#introduction)
+  - [Installation](#installation)
+  - [Setup](#setup)
+    - [Seed file import](#seed-file-import)
+  - [Approach](#approach)
+## Introduction
+This project contains the solution for the [assessement](./assessment_README.md).
+I have used the DBT itself as the framework to frame the model for the asked assessement as this provides me a good opportunity to learn about DBT for the first time to be used for data transformation.
 
-You are provided with a [dbt project folder](https://github.com/bitvavo/data-analytics-engineering-assessment)
-containing data related to cryptocurrency staking. The dataset includes information about the 
-amount of assets staked and the expected rewards for various cryptocurrencies. 
-Your goal is to build a small dbt project to answer the following question:
-- How much asset is staked every consecutive day since the first of July 2023 until the current date, 
-and how much reward is expected for each of those consecutive days?
+## Installation
+Below are the details for various setups used while implementing the solutions
+1. Machine = Macbook Pro (Apple M2)
+2. Postgres 14.11
+    ```
+    brew install postgresql
+    brew services start postgresql
+    ```
+3. Python virutal env = 
+4. DBT  
+    ```
+    python -m pip install dbt-core
+    python -m pip install dbt-postgres
+    ```
+    ```
+    ❯ dbt --version
+    Core:
+    - installed: 1.7.10
+    - latest:    1.7.11 - Update available!
 
-## Requirements:
-- The dataset is organized in CSV files, and you will need to create the necessary models to work with this data.
-- The project should cover the period starting from July 1, 2023, until the current date 
-(use the current date at the time of analysis).
-- You should calculate and store the amount of assets staked for each consecutive day 
-within the specified date range.
-- Additionally, calculate and store the expected rewards for each of those consecutive days.
+    Your version of dbt-core is out of date!
+    You can find instructions for upgrading here:
+    https://docs.getdbt.com/docs/installation
 
-## Deliverables
-- Properly organized and documented models.
-- A README file containing a brief summary of your approach, any assumptions made, and any considerations
-for performance and maintainability
+    Plugins:
+    - postgres: 1.7.10 - Update available!
 
-If you have any questions or encounter any issues during this process, please feel free 
-to reach out for assistance. We look forward to reviewing your work.# analytics_project_DBT
+    At least one plugin is out of date or incompatible with dbt-core.
+    You can find instructions for upgrading here:
+    https://docs.getdbt.com/docs/installation
+    ```
+
+## Setup
+
+### Seed file import
+There were two files `staking_Rates.csv` and `staking_Rewards.csv` that need to be imported for the required modeling. These files were imported into the database using the `dbt seed` command.  
+However, the following adjustments were made to make the import successfull
+1. column name modification
+Since, camelCase is not friendly with the postgres, staking_Rewards was not getting imported as it had a column called `rewardXx`. This column was changed to `reward` in the CSV file
+2. type cast
+Since, `source_ts_ms` is a huge integer value, `dbt seed` was throwing error saying `out of range integer`. Hence, this was typecased to `BIGINT` in the [properties.yml](./seeds/properties.yml).
+
+## Approach

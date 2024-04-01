@@ -1,6 +1,6 @@
 with rewards_merged as (
 	select c.*, r.amount as reward_amount from {{ ref('staking_rates_consecutive_day') }} as c
-left join public."staking_Rewards" as r
+left join {{ ref('staking_Rewards') }} as r
 on c.staking_date = r.date and c.contract_id = r.reward and r.type like 'expected' and not r.deleted
 )
 -- backfill and forward fill

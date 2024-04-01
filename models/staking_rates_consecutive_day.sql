@@ -25,6 +25,7 @@ case
     when grp = 0 then first_value(asset_hold) OVER (PARTITION BY contract_id ORDER BY case when asset_hold is not null then 0 else 1 end ASC, staking_date)
     else Max(asset_hold) over (partition by contract_id, grp) 
 end as asset_hold,
+/*
 case
     when grp = 0 then 0
     else Max(staked_amount) over (partition by contract_id, grp)
@@ -33,6 +34,9 @@ case
     when grp = 0 then 0
     else Max(daily_reward_per_unit) over (partition by contract_id, grp)
 end as daily_reward_per_unit	
+*/
+staked_amount,
+daily_reward_per_unit
 from (
     select *,
     COUNT(staked_amount) OVER (partition by contract_id ORDER BY date asc ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) AS grp
