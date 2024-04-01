@@ -75,7 +75,7 @@ However, if end_date is mentioned (for instance, for contract 920), then reward 
 ## Approach w/ Assumptions
 Models are built using the DRY principles so that they can be used again for future model transformations. Following is the dependency graph for the written models generated using `dbt docs serve`. 
 ![alt text](<images/Screenshot 2024-04-01 at 10.28.11 PM.png>)
-(Please open the image in new tab for clear picture!)
+(Please open the image in new tab for clear picture!)  
 Note that, two end models are generated at last based on two different approach with the assumptions mentioned below. 
 
 Details for the various models are described below.
