@@ -5,6 +5,8 @@ seeds:
     config:
       column_types: 
         source_ts_ms: BIGINT
+        amount: FLOAT
+        xx: REAL
   - name: staking_Rates
     config:
       column_types: 

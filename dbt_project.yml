@@ -16,22 +16,7 @@ model-paths: ["models"]
 analysis-paths: ["analyses"]
 test-paths: ["tests"]
 seed-paths: ["seeds"]
-seeds:  # This is where the seed configurations should start
-  #analytis_engineering_assessment: # Replace with your project's name. This should match the 'name' key above if the seeds are in the same project.
-  staking_Rates:  # This is the name of your seed file without the extension, assuming the file is seeds/staking_Rates.csv
-    +column_types:
-      source_ts_ms: BIGINIT
-      dailyRewardPerUnit: DOUBLE PRECISION
-      stakedAmount: REAL
-  staking_Rewards:  # This is another seed file in your seeds directory
-    +column_types:
-      date: DATE
-      source_ts_ms: BIGINT
-      amount: REAL
-      type: VARCHAR
-      xx: INTEGER
-      rewardXx: INTEGER
-      deleted: BOOLEAN
+
 
 macro-paths: ["macros"]
 snapshot-paths: ["snapshots"]
@@ -40,7 +25,6 @@ target-path: "target"  # directory which will store compiled SQL files
 clean-targets:         # directories to be removed by `dbt clean`
   - "target"
   - "dbt_packages"
-
 
 # Configuring models
 # Full documentation: https://docs.getdbt.com/docs/configuring-models
