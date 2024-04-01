@@ -1,3 +1,4 @@
+-- rewards_merged joins the staking_rates_consecutive_day with staking_Rewards
 with rewards_merged as (
 	select c.*, r.amount as reward_amount from {{ ref('staking_rates_consecutive_day') }} as c
 left join {{ ref('staking_Rewards') }} as r
@@ -8,10 +9,14 @@ select staking_date, end_date, contract_id, asset_reward, asset_hold, staked_amo
 	case 
        when reward_amount is null then
            case
+                -- back-fill
                when rev_group = 0 then 0 
            else 
+                -- forward-fill
                case
+                    -- forward-fill reward zero if staking_date is more than end_date of contract
                    when end_date < staking_date then 0
+                    -- otherwise forward-fill reward equal to last non-null value
                    else max(reward_amount) over (partition by contract_id, rev_group)
                end
            end 
