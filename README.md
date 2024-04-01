@@ -1,6 +1,5 @@
 # Analytics Engineering Assessment
 
-Author = Alisha Kar
 
 - [Analytics Engineering Assessment](#analytics-engineering-assessment)
   - [Introduction](#introduction)
