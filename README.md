@@ -8,7 +8,7 @@ Author = Alisha Kar
   - [Setup](#setup)
     - [Seed file import](#seed-file-import)
   - [Findings from data](#findings-from-data)
-  - [Approach](#approach)
+  - [Approach w/ Assumptions](#approach-w-assumptions)
 ## Introduction
 This project contains the solution for the [assessement](./assessment_README.md).
 I have used the DBT itself as the framework to frame the model for the asked assessement as this provides me a good opportunity to learn about DBT for the first time to be used for data transformation.
@@ -72,9 +72,10 @@ Also, the amount in the `staking_Rewards.csv` remains same for the next consecut
 Also, another observation is that, if end_date of contract is nil (for instance, for the contract 130) in the `staking_Rates.csv`, then reward amount is shown till `2023-11-09`. 
 However, if end_date is mentioned (for instance, for contract 920), then reward amount is shown only till that end_date
 
-## Approach
+## Approach w/ Assumptions
 Models are built using the DRY principles so that they can be used again for future model transformations. Following is the dependency graph for the written models generated using `dbt docs serve`. 
 ![alt text](<images/Screenshot 2024-04-01 at 10.28.11 PM.png>)
+(Please open the image in new tab for clear picture!)
 Note that, two end models are generated at last based on two different approach with the assumptions mentioned below. 
 
 Details for the various models are described below.
@@ -117,6 +118,6 @@ If we look at the example below for the contract 130, we can see that  reward am
    Since, we have back-fill the staked_amount using the two different assumptions as mentioned in the 6., the final result is achieved in two ways by taking 6.1 and 6.2  
 
     7.1 [final_with_staked_amount_drp_reset.sql](models/final_with_staked_amount_drp_reset.sql)  
-    ![alt text](<images/Screenshot 2024-04-01 at 9.50.00 PM.png>)
+    ![alt text](<images/Screenshot 2024-04-01 at 9.50.00 PM.png>)  
     7.2 [final_with_staked_amount_drp_fill.sql](models/final_with_staked_amount_drp_fill.sql)
     ![alt text](<images/Screenshot 2024-04-01 at 9.49.20 PM.png>)
