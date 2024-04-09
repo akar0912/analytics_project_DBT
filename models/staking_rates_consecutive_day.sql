@@ -25,39 +25,52 @@ left join {{ ref('staking_rates_last_per_day') }} as l
 on c.date = l.staking_date and c.contract_id = l.contract_id
 ),
 /*
-staking_rate_filled back-fill and forward-fill the staking_rate_consecutive_day_with_null table
+staking_rate_filled back-fill and forward-fill the staking_rate_consecutive_day_with_null table except staked_amount, daily_reward_per_unit and end_date, 
+date is taken from calender table where we have consecutive dates
 */
 staking_rate_filled as (
-select date as staking_date, 
-case
-    -- back-fill start_date with first non-null entry
-    when grp = 0 then first_value(start_date) OVER (PARTITION BY contract_id ORDER BY case when start_date is not null then 0 else 1 end ASC, staking_date)
-    -- forward-fill start_date with last non-null entry
-    else Max(start_date) over (partition by contract_id, grp)
-end as start_date,
-end_date,
-contract_id,
-case
-    -- back-fill asset_reward with first non-null entry
-    when grp = 0 then first_value(asset_reward) OVER (PARTITION BY contract_id ORDER BY case when asset_reward is not null then 0 else 1 end ASC, staking_date)
-    -- forward-fill asset_reward with last non-null entry
-    else Max(asset_reward) over (partition by contract_id, grp) 
-end as asset_reward,
-case
-    -- back-fill asset_hold with first non-null entry
-    when grp = 0 then first_value(asset_hold) OVER (PARTITION BY contract_id ORDER BY case when asset_hold is not null then 0 else 1 end ASC, staking_date)
-    -- forward-fill asset_hold with last non-null entry
-    else Max(asset_hold) over (partition by contract_id, grp) 
-end as asset_hold,
-staked_amount,
-daily_reward_per_unit
-from (
-    select *,
-    COUNT(staked_amount) OVER (partition by contract_id ORDER BY date asc ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) AS grp
-    from staking_rate_consecutive_day_with_null
-) as ranked
+    select date as staking_date, 
+    case
+        -- back-fill start_date with first non-null entry, this we are doing to have a conistency look for our data 
+        when grp = 0 then first_value(start_date) OVER (PARTITION BY contract_id ORDER BY case when start_date is not null then 0 else 1 end ASC, staking_date)
+        -- forward-fill start_date with last non-null entry
+        else Max(start_date) over (partition by contract_id, grp)
+        
+
+        /*
+            inner query gives data sorted by date, so don't need another order in the outer query(optimization we can do this)
+        */
+    end as start_date,
+    /*
+    we did not backfill end-date here, as in case of contract_id = 1011, first non-null end_date doesn't match with first non-null staked_amount.
+
+    However, for other column back-filled here such as start_date, asset_reward, asset_hold
+    */
+    end_date,
+    contract_id,
+    case
+        -- back-fill asset_reward with first non-null entry
+        when grp = 0 then first_value(asset_reward) OVER (PARTITION BY contract_id ORDER BY case when asset_reward is not null then 0 else 1 end ASC, staking_date)
+        -- forward-fill asset_reward with last non-null entry
+        else Max(asset_reward) over (partition by contract_id, grp) 
+    end as asset_reward,
+    case
+        -- back-fill asset_hold with first non-null entry
+        when grp = 0 then first_value(asset_hold) OVER (PARTITION BY contract_id ORDER BY case when asset_hold is not null then 0 else 1 end ASC, staking_date)
+        -- forward-fill asset_hold with last non-null entry
+        else Max(asset_hold) over (partition by contract_id, grp) 
+    end as asset_hold,
+    staked_amount,
+    daily_reward_per_unit
+    from (
+        -- I thought this will give shuffled data which is not order by date
+        select *,
+        COUNT(staked_amount) OVER (partition by contract_id ORDER BY date asc ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) AS grp
+        from staking_rate_consecutive_day_with_null
+    ) as ranked
 )
 
+/* backfill and forward fill for end_date column */
 select staking_date, start_date, 
 case
     -- back-fill end_date with first non-null entry

@@ -3,3 +3,4 @@ select staking_date, asset_hold, SUM(staked_amount) as total_staked_amount, SUM(
 from {{ ref('staked_amount_drp_reset') }}
 group by staking_date, asset_hold
 order by asset_hold, staking_date
+-- we are doing SUM of (staked_amount and Expected daily rewards) and Group by on asste_hold as it has multiple contract_iDs
